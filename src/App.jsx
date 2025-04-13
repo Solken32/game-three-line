@@ -1,38 +1,11 @@
 
 import { useState } from 'react'
 import './App.css'
+import confetti from 'canvas-confetti'
+import { Square } from './components/Square'
+import {turns,WinnerCombinate} from './constants.js' 
+import { ModalWinner } from './components/ModalWinner.jsx'
 
-const turns ={
-  X:"x",
-  O:"o"
-}
-
-// component Square
-const Square = ({children, updatetablero,index,isSelected})=>{
-  
-  const classNameTurno = `square ${isSelected ? `is-selected` : ``}`
-
-  const handleClick =()=>{
-    updatetablero(index)
-  }
-    
-  return (
-    <div onClick={handleClick} className={classNameTurno}>
-      {children}
-    </div>
-  )
-}
-
-const WinnerCombinate=[
-  [0,1,2],
-  [3,4,5],
-  [6,7,8],
-  [0,3,6],
-  [1,4,7],
-  [2,5,8],
-  [0,4,8],
-  [2,4,6]
-]
 
 function App() {
   
@@ -81,6 +54,10 @@ function App() {
     //Winner?
     const newWinner = checkWinner(newTablero)
     if(newWinner){
+      confetti({
+        particleCount: 350,
+        spread: 80,
+      })
       setGanador(newWinner)
     } else if (checkEndGame(newTablero)){  //empate
       setGanador(false) 
@@ -135,28 +112,7 @@ function App() {
         <Square isSelected={turno === turns.O}> {turns.O}</Square> 
       </section>
 
-      {
-        //ganador es diferente
-        ganador !== null && (
-          <>
-            <div className='modal-overlay'></div>
-            <section className='winner'>
-              <h2>
-                {
-                  ganador===false ? "Empate":"😎😎 Ganó: "
-                }
-              </h2>
-              <header className='winner-header'>
-                {ganador && <Square>{ganador}</Square>}
-              </header>
-              <footer>
-                <button onClick={resetGame}>Game Again</button>
-              </footer>
-
-            </section>
-          </>
-        )
-      }
+      <ModalWinner resetGame={resetGame} ganador={ganador}/>
 
 
     </main>
